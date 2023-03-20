@@ -143,15 +143,23 @@ derive_param_maxsev <- function(dataset = NULL,
   # pre-processing
   if (filter_sev %in% dataset$FATESTCD) {
     maxsev_pp <- dataset %>%
-      filter(FATESTCD == filter_sev &
-        grepl("ADMIN|SYS", FASCAT)) %>%
-      # AVAL creation for severity records
-      mutate(AVAL = case_when(
-        AVALC == "NONE" ~ 0,
-        AVALC == "MILD" ~ 1,
-        AVALC == "MODERATE" ~ 2,
-        AVALC == "SEVERE" ~ 3
-      ))
+      # filter(FATESTCD == filter_sev &
+      #   grepl("ADMIN|SYS", FASCAT)) %>%
+      # # AVAL creation for severity records
+      # mutate(AVAL = case_when(
+      #   AVALC == "NONE" ~ 0,
+      #   AVALC == "MILD" ~ 1,
+      #   AVALC == "MODERATE" ~ 2,
+      #   AVALC == "SEVERE" ~ 3
+      # ))
+      mutate(
+        AVALC = case_when(
+          FATESTCD == filter_sev & grepl('ADMIN|SYS',FASCAT) & AVALC == "NONE" ~ 0,
+          FATESTCD == filter_sev & grepl('ADMIN|SYS',FASCAT) & AVALC == "MILD" ~ 1,
+          FATESTCD == filter_sev & grepl('ADMIN|SYS',FASCAT) & AVALC == "MODERATE" ~ 2,
+          FATESTCD == filter_sev & grepl('ADMIN|SYS',FASCAT) & AVALC == "SEVERE" ~ 3
+          )
+      )
     # events exclusions
     if (is.null(exclude_events)) {
       pp <- maxsev_pp
