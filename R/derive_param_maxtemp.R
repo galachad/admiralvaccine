@@ -123,7 +123,8 @@ derive_param_maxtemp <- function(dataset = NULL,
       filter(VSSTRESN == max(VSSTRESN)) %>%
       mutate(
         AVAL = VSSTRESN,
-        AVALC = "",
+        AVALC = VSSTRESN,
+        AVALC = as.character(AVALC),
         DTYPE = "MAXIMUM",
         FATEST = test_maxtemp,
         FATESTCD = testcd_maxtemp

@@ -24,7 +24,7 @@ test_that("derive mamimum temperature records",{
     group_by(USUBJID, FAOBJ, ATPTREF) %>%
     slice_tail(n=1) %>%
     mutate(AVAL=VSSTRESN,
-           AVALC="",
+           AVALC=as.character(AVAL),
            DTYPE='MAXIMUM',
            FATESTCD='MAXTEMP',
            FATEST='Maximum temperature') %>%
@@ -73,7 +73,7 @@ test_that("derive mamimum temperature records if more than one record has
               group_by(USUBJID, FAOBJ, ATPTREF) %>%
               slice_tail(n=1) %>%
               mutate(AVAL=VSSTRESN,
-                     AVALC="",
+                     AVALC=as.character(AVAL),
                      DTYPE='MAXIMUM',
                      FATESTCD='MAXTEMP',
                      FATEST='Maximum temperature') %>%
@@ -122,7 +122,7 @@ test_that("Check if the argument `filter_faobj` filters only fever records
               group_by(USUBJID, FAOBJ, ATPTREF) %>%
               slice_tail(n=1) %>%
               mutate(AVAL=VSSTRESN,
-                     AVALC="",
+                     AVALC=as.character(AVAL),
                      DTYPE='MAXIMUM',
                      FATESTCD='MAXTEMP',
                      FATEST='Maximum temperature') %>%
@@ -166,7 +166,7 @@ test_that("Change by group variables and check if the results are matching",{
     group_by(USUBJID,ATPTREF) %>%
     slice_tail(n=1) %>%
     mutate(AVAL=VSSTRESN,
-           AVALC="",
+           AVALC=as.character(AVAL),
            DTYPE='MAXIMUM',
            FATESTCD='MAXTEMP',
            FATEST='Maximum temperature') %>%
@@ -210,7 +210,7 @@ test_that("Check if the arguments `test_maxtemp`,`testcd_maxtemp` works fine ",{
     group_by(USUBJID,ATPTREF) %>%
     slice_tail(n=1) %>%
     mutate(AVAL=VSSTRESN,
-           AVALC="",
+           AVALC=as.character(AVAL),
            DTYPE='MAXIMUM',
            FATESTCD='MAXTEMPERATURE',
            FATEST='Maximum temp') %>%

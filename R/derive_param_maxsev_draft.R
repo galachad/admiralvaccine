@@ -122,7 +122,7 @@
 #'   by_vars = exprs(USUBJID, FAOBJ, ATPTREF)
 #' )
 #'
-derive_param_maxsev <- function(dataset = NULL,
+derive_param_maxsev <- function(dataset = adface,
                                 exclude_events = NULL,
                                 filter_sev = "SEV",
                                 test_maxsev = "Maximum Severity",
@@ -143,21 +143,13 @@ derive_param_maxsev <- function(dataset = NULL,
   # pre-processing
   if (filter_sev %in% dataset$FATESTCD) {
     maxsev_pp <- dataset %>%
-      # filter(FATESTCD == filter_sev &
-      #   grepl("ADMIN|SYS", FASCAT)) %>%
-      # # AVAL creation for severity records
-      # mutate(AVAL = case_when(
-      #   AVALC == "NONE" ~ 0,
-      #   AVALC == "MILD" ~ 1,
-      #   AVALC == "MODERATE" ~ 2,
-      #   AVALC == "SEVERE" ~ 3
-      # ))
       mutate(
-        AVALC = case_when(
-          FATESTCD == filter_sev & grepl('ADMIN|SYS',FASCAT) & AVALC == "NONE" ~ 0,
-          FATESTCD == filter_sev & grepl('ADMIN|SYS',FASCAT) & AVALC == "MILD" ~ 1,
-          FATESTCD == filter_sev & grepl('ADMIN|SYS',FASCAT) & AVALC == "MODERATE" ~ 2,
-          FATESTCD == filter_sev & grepl('ADMIN|SYS',FASCAT) & AVALC == "SEVERE" ~ 3
+        AVAL = case_when(
+         AVALC == "NONE" ~ 0,
+         AVALC == "MILD" ~ 1,
+         AVALC == "MODERATE" ~ 2,
+         AVALC == "SEVERE" ~ 3
+         ,TRUE ~ AVAL
           )
       )
     # events exclusions
@@ -202,10 +194,11 @@ derive_param_maxsev <- function(dataset = NULL,
         DTYPE = "MAXIMUM",
         FATEST = test_maxsev,
         FATESTCD = testcd_maxsev
-      )
+      ) %>% ungroup()
     # binding with input data
 
-    data.frame(bind_rows(maxsev_pp, maxsev))
+    final <- bind_rows(maxsev_pp, maxsev)
+    return(data.frame(final))
   } else {
     print(paste0(filter_sev, " ", "doesn't exist in the FATESTCD"))
   }

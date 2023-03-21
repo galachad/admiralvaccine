@@ -155,8 +155,9 @@ derive_param_diam_to_sev <- function(dataset = NULL,
                                      mod = c(5, 10),
                                      sev = 10) {
   assert_data_frame(dataset,
-    required_vars = exprs(USUBJID, AVAL, AVALC, FAOBJ, FATEST, FATESTCD)
+                    required_vars = exprs(USUBJID, AVAL, AVALC, FAOBJ, FATEST, FATESTCD)
   )
+
   assert_numeric_vector(arg = c(none, mild, mod, sev), optional = FALSE)
   assert_character_vector(
     arg = c(filter_diam, filter_faobj, testcd_sev, test_sev),
@@ -166,7 +167,7 @@ derive_param_diam_to_sev <- function(dataset = NULL,
   # Checking & Removing the records which has severity records for the FAOBJ
   diam <- dataset %>% filter(FAOBJ %in% filter_faobj)
   if (testcd_sev %in% diam$FATESTCD) {
-    fil_rec <- dataset %>% filter(FAOBJ %in% filter_faobj & FATESTCD != testcd_sev)
+    fil_rec <- dataset %>% filter(FAOBJ == filter_faobj & FATESTCD != testcd_sev)
   } else {
     fil_rec <- dataset
   }
@@ -181,6 +182,7 @@ derive_param_diam_to_sev <- function(dataset = NULL,
   # Replacing FATESTCD and FATEST for Diameter with Severity
   if (filter_diam %in% diam$FATESTCD) {
     sev <- fil_rec %>%
+      filter(FAOBJ %in% filter_faobj & FATESTCD == filter_diam) %>%
       mutate(
         FATESTCD = testcd_sev,
         FATEST = test_sev,
@@ -208,7 +210,8 @@ derive_param_diam_to_sev <- function(dataset = NULL,
         AVAL = as.numeric(AVAL)
       )
     # binding with Input data set
-    return(data.frame(sev))
+    finalsev <- bind_rows(sev, fil_rec)
+    return(data.frame(finalsev))
   } else {
     stop(
       paste0(filter_diam, " ", "doesn't exist in the filtered record")

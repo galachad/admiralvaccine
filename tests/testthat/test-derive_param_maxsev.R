@@ -1,5 +1,4 @@
 # test_derive_param_maxsev
-library(admiraldev)
 library(rlang)
 library(dplyr)
 # test case 1 -------------------------------------------------------------
