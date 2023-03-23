@@ -5,15 +5,15 @@
 \title{Add New Variable(s) to the Input dataset Based on Variables from Another dataset}
 \usage{
 derive_vars_merged_vaccine(
-  dataset_face,
+  dataset,
   dataset_ex,
-  dataset_suppface = NULL,
+  dataset_supp = NULL,
   dataset_suppex = NULL,
   ex_vars
 )
 }
 \arguments{
-\item{dataset_face}{Input dataset
+\item{dataset}{Input dataset
 
 The variables specified by the \code{by_vars} argument inside the
 \code{derive_vars_merged}are expected.}
@@ -22,8 +22,8 @@ The variables specified by the \code{by_vars} argument inside the
 
 The variables specified by the \code{ex_vars} argument are expected.}
 
-\item{dataset_suppface}{Supplementary input dataset
-By default \code{dataset_suppface} will be NULL,user has to provide
+\item{dataset_supp}{Supplementary input dataset
+By default \code{dataset_supp} will be NULL,user has to provide
 supplementary dataset to merge it back with orginal input dataset
 if they have supplementary dataset in their case.}
 
@@ -50,12 +50,16 @@ the final output dataset.
 The grouping variables are defaulted within the function itself.
 
 Only the variables passed to the \code{ex_vars} will be present in the output dataset
+
+If the input dataset has multiple vaccination for a subject at same visit
+then this function will not merge ex dataset and will return only the input
+dataset merged with its supplementary dataset.
 }
 \examples{
 derive_vars_merged_vaccine(
-  dataset_face = face,
+  dataset = face,
   dataset_ex = ex,
-  dataset_suppface = NULL,
+  dataset_supp = NULL,
   dataset_suppex = NULL,
   ex_vars = exprs(EXTRT, EXDOSE, EXSEQ)
 )
