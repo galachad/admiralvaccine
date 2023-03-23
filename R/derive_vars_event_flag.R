@@ -1,7 +1,7 @@
 #' Adds Flag Variables for an Occurred Event .
 #'
 #' Creates two flag variables for the event occurred,one for the event occurred
-#' within each by group and one and one to flag if the event occurred or not
+#' within each by group and one to flag if the event occurred or not
 #' for each day.
 #'
 #'
@@ -48,6 +48,9 @@
 #'  is not at all occurred during the observation period then all the
 #'  observations within by group will be flagged as "N".
 #'
+#'  For derived records with `DTYPE` equals "MAXIMUM" , the `new_var2` will be
+#'  set to NA.
+#'
 #'
 #' @export
 #'
@@ -85,35 +88,50 @@
 #'   new_var2 = EVENTDL
 #' )
 #'
+
 derive_vars_event_flag <- function(dataset,
                                    by_vars,
                                    aval_cutoff,
-                                   new_var1 = NULL,
-                                   new_var2 = NULL) {
+                                   new_var1=NULL,
+                                   new_var2=NULL
+){
+
   # assertion check
   assert_data_frame(dataset, required_vars = by_vars)
   new_var1 <- assert_symbol(enexpr(new_var1), optional = TRUE)
   new_var2 <- assert_symbol(enexpr(new_var2), optional = TRUE)
   assert_numeric_vector(aval_cutoff)
 
-  if (!is.null(new_var1) & is.null(new_var2)) {
-    dataset %>%
+
+  if(!is.null(new_var1) & is.null(new_var2)){
+    # Derive only `new_var1`
+    data_flag <- dataset %>%
       group_by(!!!by_vars) %>%
       mutate(!!new_var1 := ifelse(any(!(is.na(AVAL)) &
-        AVAL > aval_cutoff | AVALC %in% c("Y", "MILD", "MODERATE", "SEVERE")), "Y", "N"))
-  } else if (is.null(new_var1) & !is.null(new_var2)) {
-    dataset %>%
-      mutate(!!new_var2 := ifelse(!(is.na(AVAL)) &
-        AVAL > aval_cutoff | AVALC %in% c("Y", "MILD", "MODERATE", "SEVERE"), "Y", "N"))
-  } else if (!is.null(new_var1) & !is.null(new_var2)) {
-    dataset %>%
+                                        AVAL > aval_cutoff | AVALC %in% c('Y','MILD','MODERATE','SEVERE')),"Y","N" ))
+  } else if(is.null(new_var1) & !is.null(new_var2)){
+    # Derive only `new_var2`
+    data_flag <-  dataset %>%
+      mutate(!!new_var2 := ifelse(DTYPE != 'MAXIMUM' & !(is.na(AVAL)) &
+                                    AVAL > aval_cutoff | AVALC %in% c('Y','MILD','MODERATE','SEVERE'),"Y","N"))
+  } else if(!is.null(new_var1) & !is.null(new_var2)){
+    # Derive both `new_var1` and `new_var2`
+    data_flag <- dataset %>%
       group_by(!!!by_vars) %>%
       mutate(!!new_var1 := ifelse(any(!(is.na(AVAL)) &
-        AVAL > aval_cutoff | AVALC %in% c("Y", "MILD", "MODERATE", "SEVERE")), "Y", "N")) %>%
+                                        AVAL > aval_cutoff | AVALC %in% c('Y','MILD','MODERATE','SEVERE')),"Y","N" )) %>%
       ungroup() %>%
       mutate(!!new_var2 := ifelse(!(is.na(AVAL)) &
-        AVAL > aval_cutoff | AVALC %in% c("Y", "MILD", "MODERATE", "SEVERE"), "Y", "N"))
+                                    AVAL > aval_cutoff | AVALC %in% c('Y','MILD','MODERATE','SEVERE'),"Y","N"))
   } else {
-    dataset <- dataset
+    data_flag <- dataset
   }
+if(!is.null(new_var2)){
+  data_flag %>%
+    mutate(!!new_var2 := ifelse(DTYPE == "MAXIMUM",NA_character_,!!new_var2))
+}else{
+  return(data_flag)
 }
+}
+
+
