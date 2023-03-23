@@ -127,3 +127,24 @@ in the dataset",{
              'FATESTCD','FATPTREF')
   )
 })
+
+
+testthat::test_that("derive maximum severity flag varibles",{
+  input <- tribble(
+    ~USUBJID, ~FAOBJ, ~FATESTCD, ~FATPTREF, ~AVAL, ~FADTC, ~PARAMCD,
+    "ABC101", "REDNESS", "DIAMETER", "VACC 1", 10,  "2015-01-10", "DIARE",
+    "ABC101", "REDNESS", "DIAMETER", "VACC 1", 7, "2015-01-11", "DIARE",
+    "ABC101", "REDNESS", "DIAMETER", "VACC 2", 3, "2015-02-10", "DIARE",
+    "ABC101", "REDNESS", "DIAMETER", "VACC 2", 8, "2015-02-11", "DIARE",
+    "ABC101", "FATIQUE", "SEV", "VACC 1", 1,  "2015-01-10", "SEVFAT",
+    "ABC101", "FATIQUE", "SEV", "VACC 1", 1, "2015-01-11", "SEVFAT",
+    "ABC101", "FATIQUE", "SEV", "VACC 2", 2, "2015-02-10", "SEVFAT",
+    "ABC101", "FATIQUE", "SEV", "VACC 2", 3, "2015-02-11", "SEVFAT")
+
+testthat::expect_error(
+  derive_vars_max_flag(
+    dataset = input,
+    flag1=NULL,
+    flag2 =NULL),
+regexp = paste("Please mention flag name"))
+})
