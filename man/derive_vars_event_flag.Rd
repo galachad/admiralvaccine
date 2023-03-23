@@ -53,7 +53,7 @@ the dataset with the flag variables added to it.
 }
 \description{
 Creates two flag variables for the event occurred,one for the event occurred
-within each by group and one and one to flag if the event occurred or not
+within each by group and one to flag if the event occurred or not
 for each day.
 }
 \details{
@@ -63,6 +63,9 @@ For the \code{new_var1} it will flag all observations as "Y" within the by group
 if the event occurred at least once during observation period. If the event
 is not at all occurred during the observation period then all the
 observations within by group will be flagged as "N".
+
+For derived records with \code{DTYPE} equals "MAXIMUM" , the \code{new_var2} will be
+set to NA.
 }
 \examples{
 library(tibble)
