@@ -32,11 +32,9 @@ ex <- vx_ex
 dm <- convert_blanks_to_na(dm)
 ex <- convert_blanks_to_na(ex)
 
-# User defined functions ----
-
-# Here are some examples of how you can create your own functions that
-#  operates on vectors, which can be used in `mutate`.
-
+# User defined functions
+# Here are some examples of how you can create your own functions that operate on vectors, which can
+# be used in `mutate`.
 # Grouping
 
 format_racegr1 <- function(x) {
@@ -64,7 +62,7 @@ format_region1 <- function(x) {
   )
 }
 
-# Derivations ----
+# Derivations
 # impute start and end time of exposure to first and last respectively, do not impute date
 
 ex_ext <- ex %>%
@@ -78,7 +76,7 @@ ex_ext <- ex %>%
   )
 
 adsl <- dm %>%
-  ## derive treatment variables (TRT01P, TRT01A) ----
+  # derive treatment variables (TRT01P, TRT01A)
   # See also the "Visit and Period Variables" vignette
   # (https://pharmaverse.github.io/admiral/cran-release/articles/visits_periods.html#treatment_adsl)
   mutate(
@@ -87,7 +85,7 @@ adsl <- dm %>%
     TRT01A = substring(ACTARM, 1, 9),
     TRT02A = substring(ACTARM, 11, 100)
   ) %>%
-  ## derive treatment start date (TRTSDTM) ----
+  ## derive treatment start date (TRTSDTM)
   derive_vars_merged(
     dataset_add = ex_ext,
     filter_add = (EXDOSE > 0 |
@@ -99,7 +97,7 @@ adsl <- dm %>%
     mode = "first",
     by_vars = exprs(STUDYID, USUBJID)
   ) %>%
-  ## derive treatment end date (TRTEDTM) ----
+  ## derive treatment end date (TRTEDTM)
   derive_vars_merged(
     dataset_add = ex_ext,
     filter_add = (EXDOSE > 0 |
@@ -110,9 +108,9 @@ adsl <- dm %>%
     mode = "last",
     by_vars = exprs(STUDYID, USUBJID)
   ) %>%
-  ## Derive treatment end/start date TRTSDT/TRTEDT ----
+  ## Derive treatment end/start date TRTSDT/TRTEDT
   derive_vars_dtm_to_dt(source_vars = exprs(TRTSDTM, TRTEDTM)) %>%
-  ## derive treatment duration (TRTDURD) ----
+  ## derive treatment duration (TRTDURD)
   derive_var_trtdurd()
 
 
