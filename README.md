@@ -1,6 +1,6 @@
 <!-- Please do not edit the README.md file as it is auto-generated. Only edit the README.Rmd file -->
 
-# Admiral Extension for Vaccines <img src="man/figures/logo.png" align="right" width="200" style="margin-left:50px;"/>
+# Admiral Extension for Vaccines <img src="man/figures/logo.png" align="right" width="200" style="margin-left:50px;"/> - galachad/admiralvaccine
 
 <!-- badges: start -->
 
